@@ -2,6 +2,7 @@
 
 use Illuminate\Support\Facades\Route;
 use Spatie\Sheets\Facades\Sheets;
+use App\Models\Post;
 
 /*
 |--------------------------------------------------------------------------
@@ -30,4 +31,13 @@ Route::get('/posts/{slug}', function ($slug) {
     ]);
 });
 
-Route::view('/test', 'app');
+Route::get('/authors/{author}', function ($author) {
+    $posts = Sheets::collection('posts')
+        ->all()
+        ->filter(fn (Post $post) => $post->author === $author);
+
+    return view('authors.show', [
+        'posts' => $posts,
+        'authorName' => $posts->first()->author_name
+    ]);
+});
